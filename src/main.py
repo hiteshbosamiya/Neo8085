@@ -73,6 +73,128 @@ from assembler import Assembler8085
 from processor import Processor8085
 from version import version_string, display_version
 
+class Header(QLabel):
+    """Header for different sections"""
+
+    def __init__(self, header: str):
+        super().__init__(header)
+        self.setFixedHeight(30)
+        self.setFont(QFont("Segoe UI", 12))
+        self.setStyleSheet(
+            "background-color: #5C2D91; color: white; border: none;"
+        )
+        self.setAlignment(Qt.AlignCenter)
+
+class Label(QLabel):
+    """Label - QLabel wrapper"""
+
+    def __init__(self, text: str):
+        super().__init__(text)
+        self.setFont(QFont("Consolas", 12))
+
+    def zoom_in(self):
+        """Zoom in"""
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        current_size = self.font().pointSize()
+        if current_size > 4:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.setFont(QFont(self.font().family(), 12))
+
+class LineEdit(QLineEdit):
+    """LineEdit - QLineEdit wrapper"""
+
+    def __init__(self, place_holder_text: str):
+        super().__init__()
+        self.setFont(QFont("Consolas", 10))
+        self.setPlaceholderText(place_holder_text)
+
+    def zoom_in(self):
+        """Zoom in"""
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        current_size = self.font().pointSize()
+        if current_size > 2:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.setFont(QFont(self.font().family(), 10))
+
+class TextEdit(QTextEdit):
+    """TextEdit - QTextEdit wrapper"""
+
+    def __init__(self):
+        super().__init__()
+        self.setFont(QFont("Consolas", 10))
+
+    def zoom_in(self):
+        """Zoom in"""
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        current_size = self.font().pointSize()
+        if current_size > 2:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.setFont(QFont(self.font().family(), 10))
+
+class PushButton(QPushButton):
+    """Label - QPushButton wrapper"""
+
+    def __init__(self, text: str):
+        super().__init__(text)
+        self.setFont(QFont("Segoe UI", 10))
+
+    def zoom_in(self):
+        """Zoom in"""
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        current_size = self.font().pointSize()
+        if current_size > 2:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.setFont(QFont(self.font().family(), 10))
+
+class TableWidgetItem(QTableWidgetItem):
+    """TableWidgetItem - QTableWidgetItem wrapper"""
+
+    def __init__(self, text: str):
+        super().__init__(text)
+        self.setFont(QFont("Segoe UI", 10))
+
+    def zoom_in(self):
+        """Zoom in"""
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        current_size = self.font().pointSize()
+        if current_size > 2:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.setFont(QFont(self.font().family(), 10))
 
 class LineNumberArea(QWidget):
     """Widget for displaying line numbers and breakpoints in code editor"""
@@ -128,6 +250,21 @@ class LineNumberArea(QWidget):
 
             block = block.next()
             top = bottom
+
+    def zoom_in(self):
+        """Zoom in"""
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        current_size = self.font().pointSize()
+        if current_size > 4:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.setFont(QFont(self.font().family(), 12))
 
 
 class AssemblyHighlighter(QSyntaxHighlighter):
@@ -311,11 +448,11 @@ class LineNumberedEditor(QPlainTextEdit):
         self.setStyleSheet(
             """
         QPlainTextEdit {
-            background-color: #FFFFFF;
+            background-color: white;
             color: #1E1E1E;
             padding: 0px;
             selection-background-color: #0B91FF;
-            selection-color: #FFFFFF;
+            selection-color: white;
         }
         QScrollBar:vertical {
             border: none;
@@ -345,7 +482,7 @@ class LineNumberedEditor(QPlainTextEdit):
         self.status_bar = QLabel("Ln 1, Col 1")
         self.status_bar.setFont(QFont("Segoe UI", 9))
         self.status_bar.setStyleSheet(
-            "background-color: #FFFFFF; padding: 2px 5px; border: none; solid #DDDDDD;"
+            "background-color: white; padding: 2px 5px; border: none; solid #DDDDDD;"
         )
         self.status_bar.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.status_bar.setFixedHeight(20)
@@ -493,6 +630,23 @@ class LineNumberedEditor(QPlainTextEdit):
         # Refresh line number area display
         self.lineNumberArea.update()
 
+    def zoom_in(self):
+        """Zoom in"""
+        self.lineNumberArea.zoom_in()
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        self.lineNumberArea.zoom_out()
+        current_size = self.font().pointSize()
+        if current_size > 4:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.lineNumberArea.reset_zoom()
+        self.setFont(QFont(self.font().family(), 12))
 
 class Simulator(QWidget):
     """Main simulator application for the 8085 microprocessor"""
@@ -571,7 +725,7 @@ class Simulator(QWidget):
             """
             QMenuBar {
                 font: 10pt "Segoe UI";
-                background-color: #FFFFFF;
+                background-color: white;
                 color: #1E1E1E;
                 border-bottom: 1px solid #DDDDDD;
                 padding: 0px;
@@ -666,6 +820,21 @@ class Simulator(QWidget):
         debug_menu.addAction(remove_bp_action)
         debug_menu.addAction(remove_all_bp_action)
 
+        # Zoom Menu
+        zoom_menu = self.menu_bar.addMenu("Zoom")
+        zoom_in_action = QAction("Zoom In", self)
+        zoom_in_action.setShortcut("Ctrl+=")
+        zoom_in_action.triggered.connect(self.zoom_in)
+        zoom_out_action = QAction("Zoom Out", self)
+        zoom_out_action.setShortcut("Ctrl+-")
+        zoom_out_action.triggered.connect(self.zoom_out)
+        reset_zoom_action = QAction("Reset Zoom", self)
+        reset_zoom_action.setShortcut("Ctrl+0")
+        reset_zoom_action.triggered.connect(self.reset_zoom)
+        zoom_menu.addAction(zoom_in_action)
+        zoom_menu.addAction(zoom_out_action)
+        zoom_menu.addAction(reset_zoom_action)
+
         # Help Menu
         help_menu = self.menu_bar.addMenu("Help")
         about_action = QAction("About", self)
@@ -693,7 +862,7 @@ class Simulator(QWidget):
                 color: #1E1E1E;
             }
             QMenuBar {
-                background-color: #FFFFFF;
+                background-color: white;
                 color: #1E1E1E;
                 border-bottom: 1px solid #DDDDDD;
             }
@@ -701,7 +870,7 @@ class Simulator(QWidget):
                 background-color: #CBE3F8;
             }
             QMenu {
-                background-color: #FFFFFF;
+                background-color: white;
                 border: 1px solid #CCCCCC;
             }
             QMenu::item:selected {
@@ -782,24 +951,18 @@ class Simulator(QWidget):
         log_layout.setContentsMargins(0, 0, 0, 0)
         log_layout.setSpacing(0)
 
-        log_label = QLabel("Execution Log")
-        log_label.setFont(QFont("Segoe UI", 12))
-        log_label.setStyleSheet(
-            "color: #FFFFFF; background-color: #5C2D91; padding: 5px; margin-left: 5px;"
-        )
-        log_layout.addWidget(log_label)
+        log_header = Header("EXECUTION LOG")
+        log_layout.addWidget(log_header)
 
         # Execution log widget
-        self.execution_log_widget = QTextEdit()
+        self.execution_log_widget = TextEdit()
         self.execution_log_widget.setReadOnly(True)
-        self.execution_log_widget.setFont(QFont("Consolas", 10))
 
         self.execution_log_widget.setStyleSheet(
             """
             QTextEdit {
-                background-color: #FFFFFF; 
+                background-color: white; 
                 color: #1E1E1E; 
-                margin-left: 5px; 
                 padding: 5px;
                 border: none;
             }
@@ -850,24 +1013,18 @@ class Simulator(QWidget):
         right_panel = QVBoxLayout(right_part)
 
         # Simulator header
-        simulator_header = QLabel("SIMULATOR OPERATIONS")
-        simulator_header.setFixedHeight(30)
-        simulator_header.setFont(QFont("Segoe UI", 12))
-        simulator_header.setStyleSheet(
-            "min-height: 30px; background-color: #5C2D91; color: white; border: none; margin-top: 5px;"
-        )
-        simulator_header.setAlignment(Qt.AlignCenter)
+        simulator_header = Header("SIMULATOR OPERATIONS")
         right_panel.addWidget(simulator_header)
 
         # Control buttons
         control_layout = QHBoxLayout()
-
-        self.compile_button = QPushButton("Assemble")
+        
+        self.compile_button = PushButton("Assemble")
         self.compile_button.setStyleSheet(
             """
             QPushButton {
                 background-color: #458ADB; 
-                color: #FFFFFF; 
+                color: white; 
                 border: none; 
                 padding: 6px;
             }
@@ -878,7 +1035,7 @@ class Simulator(QWidget):
         )
         self.compile_button.clicked.connect(self.compile_program)
 
-        self.step_button = QPushButton("Step")
+        self.step_button = PushButton("Step")
         self.step_button.setStyleSheet(
             """
             QPushButton {
@@ -894,7 +1051,7 @@ class Simulator(QWidget):
         )
         self.step_button.clicked.connect(self.execute_single_step)
 
-        self.run_button = QPushButton("Run")
+        self.run_button = PushButton("Run")
         self.run_button.setStyleSheet(
             """
             QPushButton {
@@ -910,7 +1067,7 @@ class Simulator(QWidget):
         )
         self.run_button.clicked.connect(self.start_continuous_execution)
 
-        self.stop_button = QPushButton("Stop")
+        self.stop_button = PushButton("Stop")
         self.stop_button.setStyleSheet(
             """
             QPushButton {
@@ -927,11 +1084,11 @@ class Simulator(QWidget):
         self.stop_button.clicked.connect(self.stop_execution)
         self.stop_button.setEnabled(False)
 
-        self.reset_button = QPushButton("Reset")
+        self.reset_button = PushButton("Reset")
         self.reset_button.setStyleSheet(
             """
             QPushButton {
-                background-color: #FFFFFF; 
+                background-color: white; 
                 color: #1E1E1E; 
                 border: 2px solid #DDDDDD; 
                 padding: 6px;
@@ -956,7 +1113,7 @@ class Simulator(QWidget):
         self.status_label = QLabel("Ready")
         self.status_label.setFont(QFont("Segoe UI", 10))
         self.status_label.setStyleSheet(
-            "background-color: #FFFFFF; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
+            "background-color: white; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
         )
         self.status_label.setAlignment(Qt.AlignCenter)
         self.set_status("Ready", "normal")
@@ -978,13 +1135,7 @@ class Simulator(QWidget):
         self.flags_grid = QGridLayout()
 
         # Registers header
-        register_header = QLabel("REGISTERS")
-        register_header.setFixedHeight(40)
-        register_header.setFont(QFont("Segoe UI", 12))
-        register_header.setStyleSheet(
-            "background-color: #5C2D91; color: white; border: none;"
-        )
-        register_header.setAlignment(Qt.AlignCenter)
+        register_header = Header("REGISTERS")
         self.registers_grid.addWidget(register_header, 0, 0, 1, 2)
 
         # A Register - Full Width
@@ -1004,13 +1155,7 @@ class Simulator(QWidget):
         self.add_register("PSW", 7, 0, 1, 2)
 
         # Flags Header
-        flag_header = QLabel("FLAGS")
-        flag_header.setFixedHeight(40)
-        flag_header.setFont(QFont("Segoe UI", 12))
-        flag_header.setStyleSheet(
-            "background-color: #5C2D91; color: white; border: none;"
-        )
-        flag_header.setAlignment(Qt.AlignCenter)
+        flag_header = Header("FLAGS")
         self.flags_grid.addWidget(flag_header, 0, 0, 1, 1)
 
         # Flags
@@ -1031,24 +1176,15 @@ class Simulator(QWidget):
         right_panel.addWidget(separator)
 
         # Memory View
-        memory_header = QLabel("MEMORY")
-        memory_header.setFixedHeight(30)
-        memory_header.setFont(QFont("Segoe UI", 12))
-        memory_header.setStyleSheet(
-            "background-color: #5C2D91; color: white; border: none;"
-        )
-        memory_header.setAlignment(Qt.AlignCenter)
+        memory_header = Header("MEMORY")
         right_panel.addWidget(memory_header)
 
         # Memory Search Bar
         memory_search_layout = QHBoxLayout()
 
-        self.memory_search = QLineEdit()
-        self.memory_search.setPlaceholderText(
-            "Enter memory address (e.g., 8000, 2000H)"
-        )
+        self.memory_search = LineEdit("Enter memory address (e.g., 8000, 2000H)")
         self.memory_search.setStyleSheet(
-            "background-color: #FFFFFF; color: #1E1E1E; border: 1px solid #DDDDDD; padding: 5px;"
+            "background-color: white; color: #1E1E1E; border: 1px solid #DDDDDD; padding: 5px;"
         )
         self.memory_search.returnPressed.connect(self.load_memory_address)
         self.memory_search.textChanged.connect(self.validate_memory_address)
@@ -1056,11 +1192,11 @@ class Simulator(QWidget):
         memory_search_layout.addWidget(self.memory_search, 4)
 
         # Add Enter button
-        self.memory_enter_button = QPushButton("Enter")
+        self.memory_enter_button = PushButton("Enter")
         self.memory_enter_button.setStyleSheet(
             """
             QPushButton {
-                background-color: #FFFFFF;
+                background-color: white;
                 color: #1E1E1E;
                 border: 1px solid #DDDDDD;
                 padding: 5px;
@@ -1074,13 +1210,13 @@ class Simulator(QWidget):
         self.memory_enter_button.clicked.connect(self.load_memory_address)
         memory_search_layout.addWidget(self.memory_enter_button, 1)
 
-        self.follow_pc_button = QPushButton("Follow PC")
+        self.follow_pc_button = PushButton("Follow PC")
         self.follow_pc_button.setCheckable(True)
         self.follow_pc_button.setChecked(False)
         self.follow_pc_button.setStyleSheet(
             """
             QPushButton {
-                background-color: #FFFFFF;
+                background-color: white;
                 color: #1E1E1E;
                 border: 1px solid #DDDDDD;
                 padding: 5px;
@@ -1100,76 +1236,32 @@ class Simulator(QWidget):
 
         right_panel.addLayout(memory_search_layout)
 
-        # Memory Table
-        self.memory_table = MemoryTableWidget(
-            16, 18
-        )  # 16 rows, 18 columns (decimal+hex address + 16 bytes)
-        self.memory_table.setFont(QFont("Consolas", 10))
-        self.memory_table.setStyleSheet(
-            """
-            QTableWidget {
-            background-color: #FFFFFF;
-            border: 1px solid #DDDDDD;
-            border-radius: 4px;
-            color: #1E1E1E;
-        }
-        QHeaderView::section {
-            background-color: #F0F0F0;
-            color: #1E1E1E;
-            padding: 5px;
-            border: 1px solid #DDDDDD;
-        }
-        QTableWidget::item {
-            border: 1px solid #F0F0F0;
-            padding: 2px;
-        }
-        QTableWidget::item:selected {
-            background-color: #0B91FF;
-            color: #FFFFFF;
-        }
-        """
-        )
-
-        self.memory_table.horizontalHeader().setDefaultSectionSize(45)
-        # Set decimal address column to resize to contents
-        self.memory_table.horizontalHeader().setSectionResizeMode(
-            0, QHeaderView.ResizeMode.ResizeToContents
-        )
-        # Set hex address column to be wider
-        self.memory_table.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeMode.ResizeToContents
-        )
-        # Alternatively, set a fixed width that's wider:
-        self.memory_table.setColumnWidth(1, 80)  # Make hex address column 80px wide
-        self.memory_table.verticalHeader().setDefaultSectionSize(28)
-
-        # Set up memory table headers
-        self.memory_table.setHorizontalHeaderItem(0, QTableWidgetItem("Dec"))
-        self.memory_table.setHorizontalHeaderItem(1, QTableWidgetItem("Hex"))
-        for i in range(16):
-            self.memory_table.setHorizontalHeaderItem(
-                i + 2, QTableWidgetItem(f"+{i:X}")
-            )
-
-        self.memory_table.horizontalHeader().setStretchLastSection(True)
-        self.memory_table.verticalHeader().setVisible(False)
-        self.memory_table.setEditTriggers(QTableWidget.NoEditTriggers)
-
+        # Memory Table of 16 rows, 18 columns (decimal+hex address + 16 bytes)
+        self.memory_table = MemoryTableWidget(16, 18, self)
         right_panel.addWidget(self.memory_table)
 
+        # Stack View
+        stack_header = Header("STACK")
+        right_panel.addWidget(stack_header)
+
+        # Stack Table of 16 rows, 18 columns (decimal+hex address + 16 bytes)
+        self.stack_table = MemoryTableWidget(16, 18, self)
+        right_panel.addWidget(self.stack_table)
+
         # Execution Statistics
+
         stats_layout = QHBoxLayout()
 
         self.instr_count_label = QLabel("Instructions: 0")
         self.instr_count_label.setFont(QFont("Segoe UI", 10))
         self.instr_count_label.setStyleSheet(
-            "background-color: #FFFFFF; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
+            "background-color: white; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
         )
 
         self.exec_time_label = QLabel("Elapsed Time: 0 ms")
         self.exec_time_label.setFont(QFont("Segoe UI", 10))
         self.exec_time_label.setStyleSheet(
-            "background-color: #FFFFFF; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
+            "background-color: white; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
         )
 
         stats_layout.addWidget(self.instr_count_label)
@@ -1198,6 +1290,8 @@ class Simulator(QWidget):
 
         # Initialize memory view
         self.load_memory_display(0x0000)
+        # Initialize stack view
+        self.load_stack_display()
 
         # Set code editor with sample program
         self.code_editor.setPlainText(
@@ -1309,10 +1403,9 @@ END
     def add_register(self, name, row, col, rowspan=1, colspan=1):
         """Add a register display to the UI"""
         value = "00H" if name not in ["SP", "PC", "PSW"] else "0000H"
-        label = QLabel(f"{name}: {value}")
-        label.setFont(QFont("Consolas", 12))
+        label = Label(f"{name}: {value}")
         label.setStyleSheet(
-            "background-color: #FFFFFF; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
+            "background-color: white; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
         )
         label.setAlignment(Qt.AlignCenter)
         self.registers_grid.addWidget(label, row, col, rowspan, colspan)
@@ -1320,10 +1413,9 @@ END
 
     def add_flag(self, name, row):
         """Add a flag display to the UI"""
-        label = QLabel(f"{name}: 0")
-        label.setFont(QFont("Consolas", 12))
+        label = Label(f"{name}: 0")
         label.setStyleSheet(
-            "background-color: #FFFFFF; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
+            "background-color: white; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
         )
         label.setAlignment(Qt.AlignCenter)
         self.flags_grid.addWidget(label, row, 0)
@@ -1500,6 +1592,29 @@ END
                 # Invalid characters were entered - nothing to do as validator handles this
                 pass
 
+    def load_stack_display(self):
+        """Load stack view starting at 0xFF00"""
+        # Address is aligned to 16-byte boundary
+        base_addr = 0xFF00
+
+        for row in range(16):
+            row_addr = base_addr + (row * 16)
+            # Set decimal address
+            self.stack_table.setItem(row, 0, QTableWidgetItem(f"{row_addr}"))
+            # Set hex address
+            self.stack_table.setItem(row, 1, QTableWidgetItem(f"{row_addr:04X}H"))
+
+            for col in range(16):
+                addr = row_addr + col
+                value = (
+                    self.processor.memory[addr]
+                    if hasattr(self.processor, "memory")
+                    else 0
+                )
+                self.stack_table.setItem(
+                    row, col + 2, QTableWidgetItem(f"{value:02X}")
+                )
+
     def compile_program(self):
         """Compile the assembly code with syntax checking"""
         code = self.code_editor.toPlainText().splitlines()
@@ -1623,6 +1738,7 @@ END
         self.update_registers_display()
         self.update_flags_display()
         self.update_memory_view()
+        self.update_stack_values()
 
         # Check execution status
         if result == "HALT":
@@ -1732,6 +1848,30 @@ END
             # Handle case where table might not be fully initialized yet
             self.add_to_log(f"Memory view update error: {str(e)}", "ERROR")
 
+    def update_stack_values(self):
+        """Update memory values without changing the current view"""
+        try:
+            sp = self.processor.registers["SP"]
+
+            # Parse the hex address (remove the 'H' suffix if present)
+            if sp > 0xFF00:
+                base_addr = 0xFF00
+            else:
+                base_addr = sp & 0xFFF0
+
+            # Update only the memory values (columns 2-17), not the address columns
+            for row in range(16):
+                row_addr = base_addr + (row * 16)
+
+                for col in range(16):
+                    addr = row_addr + col
+                    value = self.processor.memory[addr]
+                    # Update memory value column (col+2 since columns 0,1 are addresses)
+                    self.stack_table.item(row, col + 2).setText(f"{value:02X}")
+        except (ValueError, AttributeError) as e:
+            # Handle case where table might not be fully initialized yet
+            self.add_to_log(f"Stack view update error: {str(e)}", "ERROR")
+
     def add_breakpoint(self):
         """Add breakpoint at the current line if not empty"""
         cursor = self.code_editor.textCursor()
@@ -1787,7 +1927,7 @@ END
             "HALT": "#AAAA00",  # Yellow
             "ERROR": "#AA0000",  # Red
             "SYSTEM": "#00AAAA",  # Cyan
-        }.get(status, "#FFFFFF")
+        }.get(status, "white")
 
         # Format the log entry with HTML
         log_entry = f"<span style='color:{status_color}'>[{timestamp}] {message}</span>"
@@ -1930,6 +2070,114 @@ END
 
         return False  # No need to save or user discarded changes
 
+    def zoom_in(self):
+        """Zoom in"""
+        self.code_editor.zoom_in()
+        self.execution_log_widget.zoom_in()
+        self.hex_input.zoom_in()
+        self.bin_input.zoom_in()
+        self.dec_input.zoom_in()
+        self.memory_addr_input.zoom_in()
+        self.memory_value_input.zoom_in()
+        self.write_memory_button.zoom_in()
+        self.zoom_in_registers_display()
+        self.zoom_in_flags_display()
+        self.compile_button.zoom_in()
+        self.step_button.zoom_in()
+        self.run_button.zoom_in()
+        self.stop_button.zoom_in()
+        self.reset_button.zoom_in()
+        self.memory_search.zoom_in()
+        self.memory_enter_button.zoom_in()
+        self.follow_pc_button.zoom_in()
+        self.ascii_input.zoom_in()
+        for i in range(self.memory_table.columnCount()):
+            self.memory_table.horizontalHeaderItem(i).zoom_in()
+        self.memory_table.zoom_in()
+        self.stack_table.zoom_in()
+
+    def zoom_out(self):
+        """Zoom out"""
+        self.code_editor.zoom_out()
+        self.execution_log_widget.zoom_out()
+        self.hex_input.zoom_out()
+        self.bin_input.zoom_out()
+        self.dec_input.zoom_out()
+        self.ascii_input.zoom_out()
+        self.memory_addr_input.zoom_out()
+        self.memory_value_input.zoom_out()
+        self.write_memory_button.zoom_out()
+        self.zoom_out_registers_display()
+        self.zoom_out_flags_display()
+        self.compile_button.zoom_out()
+        self.step_button.zoom_out()
+        self.run_button.zoom_out()
+        self.stop_button.zoom_out()
+        self.reset_button.zoom_out()
+        self.memory_search.zoom_out()
+        self.memory_enter_button.zoom_out()
+        self.follow_pc_button.zoom_out()
+        for i in range(self.memory_table.columnCount()):
+            self.memory_table.horizontalHeaderItem(i).zoom_out()
+        self.memory_table.zoom_out()
+        self.stack_table.zoom_out()
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.code_editor.reset_zoom()
+        self.execution_log_widget.reset_zoom()
+        self.hex_input.reset_zoom()
+        self.bin_input.reset_zoom()
+        self.dec_input.reset_zoom()
+        self.ascii_input.reset_zoom()
+        self.memory_addr_input.reset_zoom()
+        self.memory_value_input.reset_zoom()
+        self.write_memory_button.reset_zoom()
+        self.reset_zoom_registers_display()
+        self.reset_zoom_flags_display()
+        self.compile_button.reset_zoom()
+        self.step_button.reset_zoom()
+        self.run_button.reset_zoom()
+        self.stop_button.reset_zoom()
+        self.reset_button.reset_zoom()
+        self.memory_search.reset_zoom()
+        self.memory_enter_button.reset_zoom()
+        self.follow_pc_button.reset_zoom()
+        for i in range(self.memory_table.columnCount()):
+            self.memory_table.horizontalHeaderItem(i).reset_zoom()
+        self.memory_table.reset_zoom()
+        self.stack_table.reset_zoom()
+
+    def zoom_in_registers_display(self):
+        """Zoom in"""
+        for label in self.register_labels:
+            self.register_labels[label].zoom_in()
+
+    def zoom_out_registers_display(self):
+        """Zoom out"""
+        for label in self.register_labels:
+            self.register_labels[label].zoom_out()
+
+    def reset_zoom_registers_display(self):
+        """Reset zoom"""
+        for label in self.register_labels:
+            self.register_labels[label].reset_zoom()
+
+    def zoom_in_flags_display(self):
+        """Zoom in"""
+        for label in self.flag_labels:
+            self.flag_labels[label].zoom_in()
+
+    def zoom_out_flags_display(self):
+        """Zoom out"""
+        for label in self.flag_labels:
+            self.flag_labels[label].zoom_out()
+
+    def reset_zoom_flags_display(self):
+        """Reset zoom"""
+        for label in self.flag_labels:
+            self.flag_labels[label].reset_zoom()
+
     def show_about(self):
         """Show about dialog"""
         QMessageBox.information(
@@ -1998,13 +2246,13 @@ END
 
         # Choose background color based on status type
         bg_colors = {
-            "normal": "#FFFFFF",  # White for normal/ready states
+            "normal": "white",  # White for normal/ready states
             "success": "#DFF6DD",  # Light green for success/compile/run states
             "warning": "#FFF4CE",  # Light yellow for warning/halt/pause states
             "error": "#FDE7E9",  # Light red for error states
         }
 
-        bg_color = bg_colors.get(status_type, "#FFFFFF")
+        bg_color = bg_colors.get(status_type, "white")
 
         # Apply the style
         self.status_label.setStyleSheet(base_style.format(bg_color=bg_color))
@@ -2031,13 +2279,7 @@ END
         converter_widget.setStyleSheet("background-color: white;")
 
         # Title
-        converter_header = QLabel("NUMBER CONVERTER")
-        converter_header.setFixedHeight(32)
-        converter_header.setFont(QFont("Segoe UI", 12))
-        converter_header.setStyleSheet(
-            "background-color: #5C2D91; color: white; border: none;"
-        )
-        converter_header.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        converter_header = Header("NUMBER CONVERTER")
 
         # Create form layout for input fields with minimal margins
         form_layout = QFormLayout()
@@ -2045,27 +2287,19 @@ END
         form_layout.setSpacing(4)  # Reduced spacing
 
         # Hex input
-        self.hex_input = QLineEdit()
-        self.hex_input.setFont(QFont("Consolas", 10))
-        self.hex_input.setPlaceholderText("Enter hex value")
+        self.hex_input = LineEdit("Enter hex value")
         self.hex_input.textChanged.connect(lambda: self.convert_number("hex"))
 
         # Binary input
-        self.bin_input = QLineEdit()
-        self.bin_input.setFont(QFont("Consolas", 10))
-        self.bin_input.setPlaceholderText("Enter binary value")
+        self.bin_input = LineEdit("Enter binary value")
         self.bin_input.textChanged.connect(lambda: self.convert_number("bin"))
 
         # Decimal input
-        self.dec_input = QLineEdit()
-        self.dec_input.setFont(QFont("Consolas", 10))
-        self.dec_input.setPlaceholderText("Enter decimal value")
+        self.dec_input = LineEdit("Enter decimal value")
         self.dec_input.textChanged.connect(lambda: self.convert_number("dec"))
 
         # ASCII input (new)
-        self.ascii_input = QLineEdit()
-        self.ascii_input.setFont(QFont("Consolas", 10))
-        self.ascii_input.setPlaceholderText("Enter ASCII character")
+        self.ascii_input = LineEdit("Enter ASCII character")
         self.ascii_input.setMaxLength(1)  # Only allow one character
         self.ascii_input.textChanged.connect(lambda: self.convert_number("ascii"))
 
@@ -2178,13 +2412,7 @@ END
         memory_editor_widget.setStyleSheet("background-color: white;")
 
         # Title
-        editor_header = QLabel("MEMORY EDITOR")
-        editor_header.setFixedHeight(30)
-        editor_header.setFont(QFont("Segoe UI", 12))
-        editor_header.setStyleSheet(
-            "background-color: #5C2D91; color: white; border: none;"
-        )
-        editor_header.setAlignment(Qt.AlignCenter)
+        editor_header = Header("MEMORY EDITOR")
 
         # Create form layout for input fields
         form_layout = QFormLayout()
@@ -2192,21 +2420,17 @@ END
         form_layout.setSpacing(4)  # Reduced spacing
 
         # Address input
-        self.memory_addr_input = QLineEdit()
-        self.memory_addr_input.setFont(QFont("Consolas", 10))
-        self.memory_addr_input.setPlaceholderText("Memory address (0-65535)[H]")
+        self.memory_addr_input = LineEdit("Memory address (0-65535)[H]")
 
         # Value input
-        self.memory_value_input = QLineEdit()
-        self.memory_value_input.setFont(QFont("Consolas", 10))
-        self.memory_value_input.setPlaceholderText("Value (0-255)[H]")
+        self.memory_value_input = LineEdit("Value (0-255)[H]")
 
         # Add fields to form
         form_layout.addRow("Address:", self.memory_addr_input)
         form_layout.addRow("Value:", self.memory_value_input)
 
         # Add write button
-        self.write_memory_button = QPushButton("Write to Memory")
+        self.write_memory_button = PushButton("Write to Memory")
         self.write_memory_button.setStyleSheet(
             """
             QPushButton {
@@ -2335,9 +2559,88 @@ END
 class MemoryTableWidget(QTableWidget):
     """Custom QTableWidget that clears selection when losing focus"""
 
+    def __init__(self, rows, columns, simulator: Simulator, parent=None):
+        super().__init__(rows, columns, parent)
+        self.simulator = simulator
+        self.setFont(QFont("Consolas", 10))
+        self.setStyleSheet(
+            """
+            QTableWidget {
+            background-color: white;
+            border: 1px solid #DDDDDD;
+            border-radius: 4px;
+            color: #1E1E1E;
+            }
+            QHeaderView::section {
+                background-color: #F0F0F0;
+                color: #1E1E1E;
+                padding: 5px;
+                border: 1px solid #DDDDDD;
+            }
+            QTableWidget::item {
+                border: 1px solid #F0F0F0;
+                padding: 2px;
+            }
+            QTableWidget::item:selected {
+                background-color: #0B91FF;
+                color: white;
+            }
+        """
+        )
+
+        self.horizontalHeader().setDefaultSectionSize(45)
+        # Set decimal address column to resize to contents
+        self.horizontalHeader().setSectionResizeMode(
+            0, QHeaderView.ResizeMode.ResizeToContents
+        )
+        # Set hex address column to be wider
+        self.horizontalHeader().setSectionResizeMode(
+            1, QHeaderView.ResizeMode.ResizeToContents
+        )
+        # Alternatively, set a fixed width that's wider:
+        self.setColumnWidth(1, 80)  # Make hex address column 80px wide
+        self.verticalHeader().setDefaultSectionSize(28)
+
+        # Set up memory table headers
+        self.setHorizontalHeaderItem(0, TableWidgetItem("Dec"))
+        self.setHorizontalHeaderItem(1, TableWidgetItem("Hex"))
+        for i in range(16):
+            self.setHorizontalHeaderItem(
+                i + 2, TableWidgetItem(f"+{i:X}")
+            )
+
+        self.horizontalHeader().setStretchLastSection(True)
+        self.verticalHeader().setVisible(False)
+        self.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.cellClicked.connect(self.display_value)
+
+    def display_value(self, row, column):
+        if column >= 2:
+            lsb_addr = int(self.item(row, 0).text()) + column - 2
+            lsb = f"{self.simulator.processor.memory[lsb_addr]:02X}H"
+            msb = None if lsb_addr >= 0xFFFF else f"{self.simulator.processor.memory[lsb_addr + 1]:02X}"
+            self.simulator.add_to_log(f"Byte value at {lsb_addr:04X}H is {lsb}")
+            if msb is not None:
+                self.simulator.add_to_log(f"Word value at {lsb_addr:04X}H is {msb}{lsb}")
+        
     def focusOutEvent(self, event):
         self.clearSelection()
         super().focusOutEvent(event)
+
+    def zoom_in(self):
+        """Zoom in"""
+        current_size = self.font().pointSize()
+        self.setFont(QFont(self.font().family(), current_size + 1))
+
+    def zoom_out(self):
+        """Zoom out"""
+        current_size = self.font().pointSize()
+        if current_size > 1:
+            self.setFont(QFont(self.font().family(), current_size - 1))
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.setFont(QFont(self.font().family(), 10))
 
 
 def main():
