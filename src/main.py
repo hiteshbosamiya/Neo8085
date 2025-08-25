@@ -1129,45 +1129,36 @@ class Simulator(QWidget):
         registers_layout = QHBoxLayout()
 
         self.register_labels = {}
-        self.flag_labels = {}
 
         self.registers_grid = QGridLayout()
-        self.flags_grid = QGridLayout()
 
         # Registers header
         register_header = Header("REGISTERS")
         self.registers_grid.addWidget(register_header, 0, 0, 1, 2)
 
-        # A Register - Full Width
-        self.add_register("A", 1, 0, 1, 2)
+        # A Register & Flags
+        self.add_register("A", 1, 0)
+        self.flags_group = Flags(self)
+        self.registers_grid.addWidget(self.flags_group, 1, 1)
+
+        # PSW Register - Full Width
+        self.add_register("PSW", 2, 0, 1, 2)
 
         # B, C, D, E, H, L Registers - Two Columns
-        self.add_register("B", 2, 0)
-        self.add_register("C", 2, 1)
-        self.add_register("D", 3, 0)
-        self.add_register("E", 3, 1)
-        self.add_register("H", 4, 0)
-        self.add_register("L", 4, 1)
+        self.add_register("B", 3, 0)
+        self.add_register("C", 3, 1)
+        self.add_register("D", 4, 0)
+        self.add_register("E", 4, 1)
+        self.add_register("H", 5, 0)
+        self.add_register("L", 5, 1)
 
-        # SP, PC and PSW Registers - Full Width
-        self.add_register("SP", 5, 0, 1, 2)
-        self.add_register("PC", 6, 0, 1, 2)
-        self.add_register("PSW", 7, 0, 1, 2)
+        # SP and PC Registers - Full Width
+        self.add_register("SP", 6, 0, 1, 2)
+        self.add_register("PC", 7, 0, 1, 2)
 
-        # Flags Header
-        flag_header = Header("FLAGS")
-        self.flags_grid.addWidget(flag_header, 0, 0, 1, 1)
-
-        # Flags
-        self.add_flag("S", 1)
-        self.add_flag("Z", 2)
-        self.add_flag("AC", 3)
-        self.add_flag("P", 4)
-        self.add_flag("C", 5)
-
-        registers_layout.addLayout(self.registers_grid, 3)
-        registers_layout.addLayout(self.flags_grid, 1)
+        registers_layout.addLayout(self.registers_grid, 1)
         right_panel.addLayout(registers_layout)
+        self.update_registers_display()
 
         # Separator
         separator = QFrame()
@@ -1411,16 +1402,6 @@ END
         self.registers_grid.addWidget(label, row, col, rowspan, colspan)
         self.register_labels[name] = label
 
-    def add_flag(self, name, row):
-        """Add a flag display to the UI"""
-        label = Label(f"{name}: 0")
-        label.setStyleSheet(
-            "background-color: white; color: #1E1E1E; padding: 5px; border: 1px solid #DDDDDD;"
-        )
-        label.setAlignment(Qt.AlignCenter)
-        self.flags_grid.addWidget(label, row, 0)
-        self.flag_labels[name] = label
-
     def update_registers_display(self):
         """Update register display from processor state"""
         for reg, value in self.processor.registers.items():
@@ -1432,16 +1413,13 @@ END
                     hex_value = f"{value:02X}H"
                 self.register_labels[reg].setText(f"{reg}: {hex_value}")
 
+        # Update flags display from processor state
+        self.flags_group.update_display()
+
         # Update PSW display - combining A register and flags
         if "PSW" in self.register_labels:
             psw_value = self.processor.get_psw()
             self.register_labels["PSW"].setText(f"PSW: {psw_value:04X}H")
-
-    def update_flags_display(self):
-        """Update flags display from processor state"""
-        for flag, value in self.processor.flags.items():
-            if flag in self.flag_labels:
-                self.flag_labels[flag].setText(f"{flag}: {value}")
 
     def start_fast_execution(self):
         """Start continuous execution mode without code highlighting for better performance"""
@@ -1630,7 +1608,6 @@ END
 
             # Update UI
             self.update_registers_display()
-            self.update_flags_display()
             self.code_editor.updateLineNumberAreaWidth(0)
             # By setting the text to ORG address we are allowing the user to
             # switch between Follow PC or ORG easily
@@ -1736,7 +1713,6 @@ END
 
         # Update UI components
         self.update_registers_display()
-        self.update_flags_display()
         self.update_memory_view()
         self.update_stack_values()
 
@@ -2081,7 +2057,6 @@ END
         self.memory_value_input.zoom_in()
         self.write_memory_button.zoom_in()
         self.zoom_in_registers_display()
-        self.zoom_in_flags_display()
         self.compile_button.zoom_in()
         self.step_button.zoom_in()
         self.run_button.zoom_in()
@@ -2108,7 +2083,6 @@ END
         self.memory_value_input.zoom_out()
         self.write_memory_button.zoom_out()
         self.zoom_out_registers_display()
-        self.zoom_out_flags_display()
         self.compile_button.zoom_out()
         self.step_button.zoom_out()
         self.run_button.zoom_out()
@@ -2134,7 +2108,6 @@ END
         self.memory_value_input.reset_zoom()
         self.write_memory_button.reset_zoom()
         self.reset_zoom_registers_display()
-        self.reset_zoom_flags_display()
         self.compile_button.reset_zoom()
         self.step_button.reset_zoom()
         self.run_button.reset_zoom()
@@ -2152,31 +2125,19 @@ END
         """Zoom in"""
         for label in self.register_labels:
             self.register_labels[label].zoom_in()
+        self.flags_group.zoom_in()
 
     def zoom_out_registers_display(self):
         """Zoom out"""
         for label in self.register_labels:
             self.register_labels[label].zoom_out()
+        self.flags_group.zoom_out()
 
     def reset_zoom_registers_display(self):
         """Reset zoom"""
         for label in self.register_labels:
             self.register_labels[label].reset_zoom()
-
-    def zoom_in_flags_display(self):
-        """Zoom in"""
-        for label in self.flag_labels:
-            self.flag_labels[label].zoom_in()
-
-    def zoom_out_flags_display(self):
-        """Zoom out"""
-        for label in self.flag_labels:
-            self.flag_labels[label].zoom_out()
-
-    def reset_zoom_flags_display(self):
-        """Reset zoom"""
-        for label in self.flag_labels:
-            self.flag_labels[label].reset_zoom()
+        self.flags_group.zoom_out()
 
     def show_about(self):
         """Show about dialog"""
@@ -2204,7 +2165,6 @@ END
 
         # Reset UI elements
         self.update_registers_display()
-        self.update_flags_display()
         self.load_memory_display(0x0000)
         self.memory_search.setText("")
 
@@ -2642,6 +2602,63 @@ class MemoryTableWidget(QTableWidget):
         """Reset zoom"""
         self.setFont(QFont(self.font().family(), 10))
 
+
+class Flags(QWidget):
+    def __init__(self, simulator: Simulator):
+        super().__init__()
+        self.simulator = simulator
+        vbox_layout = QVBoxLayout()
+        vbox_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vbox_layout.setContentsMargins(0, 0, 0, 0)
+        vbox_layout.setSpacing(0)
+        self.setLayout(vbox_layout)
+        self.header = Label(f"Flags: {2:02X}H")
+        self.header.setFont(QFont("Consolas", 12))
+        self.header.setStyleSheet(
+            "background-color: white; color: #1E1E1E; border: 1px solid #DDDDDD;"
+        )
+        self.header.setAlignment(Qt.AlignCenter)
+        vbox_layout.addWidget(self.header)
+        hbox_layout = QHBoxLayout()
+        hbox_layout.setContentsMargins(0, 0, 0, 0)
+        hbox_layout.setSpacing(0)
+        self.flags: dict[str, Label] = {"S": None, "Z": None, "X5": None, "AC": None, "X3": None, "P": None, "X1": None, "C": None}
+        for flag in self.flags:
+            self.flags[flag] = Label(flag)
+            self.flags[flag].setStyleSheet("background-color: black; color: grey; border: 1px solid #DDDDDD;")
+            hbox_layout.addWidget(self.flags[flag])
+        vbox_layout.addLayout(hbox_layout)
+
+    def update_display(self):
+        """Update flags display from processor state"""
+        if self.simulator is None:
+            return
+        self.header.setText(f"Flags: {self.simulator.processor.get_flags_byte():02X}H")
+        for flag, value in self.simulator.processor.flags.items():
+            if flag in self.flags:
+                if value == 1:
+                    self.flags[flag].setStyleSheet("background-color: black; color: lightgreen; border: 1px solid #DDDDDD;")
+                else:
+                    self.flags[flag].setStyleSheet("background-color: black; color: grey; border: 1px solid #DDDDDD;")
+                self.flags[flag].update()
+
+    def zoom_in(self):
+        """Zoom in"""
+        self.header.zoom_in()
+        for flag in self.flags:
+            self.flags[flag].zoom_in()
+
+    def zoom_out(self):
+        """Zoom out"""
+        self.header.zoom_out()
+        for flag in self.flags:
+            self.flags[flag].zoom_out()
+
+    def reset_zoom(self):
+        """Reset zoom"""
+        self.header.reset_zoom()
+        for flag in self.flags:
+            self.flags[flag].reset_zoom()
 
 def main():
     app = QApplication(sys.argv)

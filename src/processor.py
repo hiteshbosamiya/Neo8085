@@ -34,7 +34,8 @@ class Processor8085:
             "PC": 0x0000,
             "Inc/Dec Latch": 0,
         }
-        self.flags = {"S": 0, "Z": 0, "AC": 0, "P": 0, "C": 0}
+        # Bit 1 is always set in 8085 (hence X1 is 1)
+        self.flags = {"S": 0, "Z": 0, "AC": 0, "P": 0, "X1": 1, "C": 0}
         self.memory = bytearray(0x10000)  # 64KB memory space
         self.halted = False
         self.error = None
@@ -84,18 +85,23 @@ class Processor8085:
 
     def get_psw(self):
         """
-        Returns the Program Status Word (PSW) - 16-bit value combining A register and flags.
+        Returns the Program Status Word (PSW) - 16-bit value combining A register and flags byte.
+        """
+        return (self.registers["A"] << 8) | self.get_flags_byte()
+
+    def get_flags_byte(self):
+        """
+        Returns the flags byte.
         The flags byte has bits: S (7), Z (6), 0 (5), AC (4), 0 (3), P (2), 1 (1), C (0)
         """
-        flags_byte = (
+        return (
             (self.flags["S"] << 7)
             | (self.flags["Z"] << 6)
             | (self.flags["AC"] << 4)
             | (self.flags["P"] << 2)
-            | (1 << 1)  # Bit 1 is always set in 8085
+            | (self.flags["X1"] << 1)
             | self.flags["C"]
         )
-        return (self.registers["A"] << 8) | flags_byte
 
     def update_flags(
         self, result, check_carry=False, carry_value=None, check_ac=False, ac_value=None
